@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Message d'accueil — Villa CABOUA</title>
+<link rel="apple-touch-icon" href="icone.png">
+<link rel="icon" type="image/png" href="favicon.png">
+<meta name="apple-mobile-web-app-title" content="Accueil">
+<meta name="theme-color" content="#d6543a">
+<style>
+  * { box-sizing:border-box; }
+  body { font-family:'Segoe UI',Arial,sans-serif; background:#f7f3ee; margin:0; padding:18px;
+         display:flex; justify-content:center; }
+  .carte { background:#fff; border-radius:16px; box-shadow:0 6px 24px rgba(0,0,0,.10);
+           padding:22px 20px 26px; width:100%; max-width:520px; }
+  .logo { display:block; margin:0 auto 6px; width:110px; }
+  h1 { color:#d6543a; font-size:1.15rem; margin:0 0 16px; text-align:center; }
+  fieldset { border:1px solid #eadfd5; border-radius:12px; margin:0 0 14px; padding:12px 14px; }
+  legend { color:#d6543a; font-weight:600; font-size:.92rem; padding:0 6px; }
+  .ligne { display:flex; gap:10px; flex-wrap:wrap; }
+  .champ { flex:1 1 130px; margin-bottom:8px; }
+  label { display:block; font-size:.8rem; color:#666; margin-bottom:3px; }
+  input, select { width:100%; padding:9px 10px; border:1px solid #ddcfc2; border-radius:8px;
+                  font-size:1rem; background:#fff; }
+  input:focus, select:focus { outline:2px solid #d6543a; border-color:#d6543a; }
+  .radios { display:flex; gap:14px; align-items:center; padding-top:6px; }
+  .radios label { font-size:.92rem; color:#333; display:flex; gap:5px; align-items:center; margin:0; }
+  .radios input { width:auto; }
+  .bulle { background:#e7f9d8; border-radius:14px; border-top-left-radius:4px;
+           padding:14px 16px; margin:14px 0; font-size:.94rem; line-height:1.45;
+           white-space:pre-wrap; color:#222; box-shadow:0 1px 2px rgba(0,0,0,.08); }
+  .boutons { display:flex; gap:10px; }
+  button { flex:1; border:none; border-radius:10px; padding:13px 8px; font-size:1rem;
+           font-weight:600; cursor:pointer; }
+  .copier { background:#d6543a; color:#fff; }
+  .whatsapp { background:#25d366; color:#fff; }
+  .ok { text-align:center; color:#1a7f37; font-size:.88rem; min-height:1.2em; margin-top:8px; }
+</style>
+</head>
+<body>
+<div class="carte">
+  <img class="logo" src="logo.png" alt="Villa CABOUA">
+  <h1>Message d'accueil — remise des clés</h1>
+
+  <fieldset>
+    <legend>Locataire</legend>
+    <div class="ligne">
+      <div class="champ"><label>Prénom</label><input id="prenom" placeholder="Natacha"></div>
+      <div class="champ"><label>&nbsp;</label>
+        <div class="radios">
+          <label><input type="radio" name="genre" value="f" checked> Madame</label>
+          <label><input type="radio" name="genre" value="h"> Monsieur</label>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Arrivée</legend>
+    <div class="ligne">
+      <div class="champ"><label>Jour</label>
+        <select id="jour">
+          <option value="auj" selected>Aujourd'hui</option>
+          <option value="dem">Demain</option>
+          <option value="date">Autre date…</option>
+        </select>
+      </div>
+      <div class="champ" id="champDate" style="display:none"><label>Date</label><input id="date" type="date"></div>
+      <div class="champ"><label>Heure de remise des clés</label><input id="heure" type="time" value="14:30"></div>
+    </div>
+  </fieldset>
+
+  <div class="bulle" id="apercu"></div>
+
+  <div class="boutons">
+    <button class="copier" onclick="copier()">📋 Copier</button>
+    <button class="whatsapp" onclick="whatsapp()">💬 WhatsApp</button>
+  </div>
+  <div class="ok" id="ok"></div>
+</div>
+
+<script>
+function construire() {
+  const prenom = document.getElementById('prenom').value.trim() || '…';
+  const genre = document.querySelector('input[name="genre"]:checked').value;
+  const jour = document.getElementById('jour').value;
+  const h = document.getElementById('heure').value || '14:30';
+  const heure = h.replace(':', 'h');
+
+  let quand = "aujourd'hui", memeJour = true;
+  if (jour === 'dem') { quand = 'demain'; memeJour = false; }
+  else if (jour === 'date') {
+    const v = document.getElementById('date').value;
+    memeJour = false;
+    if (v) {
+      const dte = new Date(v + 'T12:00:00');
+      quand = 'le ' + dte.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long' });
+      const auj = new Date();
+      memeJour = dte.toDateString() === auj.toDateString();
+    } else quand = 'le …';
+  }
+
+  const arrive = genre === 'f' ? 'arrivée' : 'arrivé';
+  const fin = memeJour ? "Au plaisir de vous accueillir à tout à l'heure 🌴" : "Au plaisir de vous accueillir 🌴";
+
+  return "Bonjour " + prenom + "\nJ'espère que vous allez bien 😊\n\n"
+    + "Comme convenu, je vous attends " + quand + " à " + heure + " pour la remise des clés.\n\n"
+    + "Voici le point GPS de la villa pour vous y rendre facilement :\n"
+    + "https://maps.app.goo.gl/TeLPYX3chBtjB63z6\n\n"
+    + "Une fois " + arrive + " au point GPS, prenez le petit chemin sur votre droite : la villa est la 2ᵉ maison sur la gauche.\n\n"
+    + "Le stationnement est prévu juste devant la villa, vous pourrez vous garer facilement à votre arrivée.\n\n"
+    + "N'hésitez pas à me prévenir lorsque vous êtes en route ou en cas de léger retard.\n\n"
+    + "Je reste bien entendu joignable si besoin.\n\n"
+    + fin + "\nThierry";
+}
+
+function maj() {
+  document.getElementById('champDate').style.display =
+    document.getElementById('jour').value === 'date' ? '' : 'none';
+  document.getElementById('apercu').textContent = construire();
+  document.getElementById('ok').textContent = '';
+}
+
+async function copier() {
+  const texte = construire();
+  try { await navigator.clipboard.writeText(texte); }
+  catch (e) {
+    const ta = document.createElement('textarea');
+    ta.value = texte; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy'); ta.remove();
+  }
+  document.getElementById('ok').textContent = '✓ Message copié — collez-le dans WhatsApp';
+}
+
+function whatsapp() {
+  window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(construire()), '_blank');
+}
+
+document.querySelectorAll('input, select').forEach(e => {
+  e.addEventListener('input', maj);
+  e.addEventListener('change', maj);
+});
+maj();
+</script>
+</body>
+</html>
