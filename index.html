@@ -36,6 +36,9 @@
   .copier { background:#d6543a; color:#fff; }
   .whatsapp { background:#25d366; color:#fff; }
   .ok { text-align:center; color:#1a7f37; font-size:.88rem; min-height:1.2em; margin-top:8px; }
+  .opt-mediation { display:flex; gap:8px; align-items:center; font-size:.9rem; color:#444;
+                   margin:2px 2px 4px; cursor:pointer; }
+  .opt-mediation input { width:auto; }
 </style>
 </head>
 <body>
@@ -71,6 +74,10 @@
     </div>
   </fieldset>
 
+  <label class="opt-mediation">
+    <input type="checkbox" id="mediation"> Ajouter la mention de médiation (réservation en direct)
+  </label>
+
   <div class="bulle" id="apercu"></div>
 
   <div class="boutons">
@@ -104,6 +111,13 @@ function construire() {
   const arrive = genre === 'f' ? 'arrivée' : 'arrivé';
   const fin = memeJour ? "Au plaisir de vous accueillir à tout à l'heure 🌴" : "Au plaisir de vous accueillir 🌴";
 
+  const mediation = document.getElementById('mediation').checked
+    ? "ℹ️ Médiation de la consommation : en cas de litige, toute réclamation doit d'abord m'être "
+      + "adressée par écrit (villa.caboua@gmail.com). À défaut d'accord dans un délai de deux mois, "
+      + "vous pouvez saisir gratuitement le médiateur CM2C — 49 rue de Ponthieu, 75008 Paris — "
+      + "www.cm2c.net, dans un délai d'un an à compter de votre réclamation.\n\n"
+    : "";
+
   return "Bonjour " + prenom + "\nJ'espère que vous allez bien 😊\n\n"
     + "Comme convenu, je vous attends " + quand + " à " + heure + " pour la remise des clés.\n\n"
     + "Voici le point GPS de la villa pour vous y rendre facilement :\n"
@@ -112,6 +126,7 @@ function construire() {
     + "Le stationnement est prévu juste devant la villa, vous pourrez vous garer facilement à votre arrivée.\n\n"
     + "N'hésitez pas à me prévenir lorsque vous êtes en route ou en cas de léger retard.\n\n"
     + "Je reste bien entendu joignable si besoin.\n\n"
+    + mediation
     + fin + "\nThierry";
 }
 
