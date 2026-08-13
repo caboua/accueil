@@ -74,7 +74,7 @@
     </div>
   </fieldset>
 
-  <label class="opt-mediation"><input type="checkbox" id="demandeHeure"> Demander l'heure d'arrivée (au lieu de la remise des clés)</label><label class="opt-mediation">
+  <label class="opt-mediation"><input type="checkbox" id="msgAccueil" checked> Accueil : remise des clés</label><label class="opt-mediation"><input type="checkbox" id="demandeHeure"> Demander l'heure d'arrivée</label><label class="opt-mediation" id="optMediation">
     <input type="checkbox" id="mediation"> Ajouter la mention de médiation (réservation en direct)
   </label>
 
@@ -132,7 +132,7 @@ function construire() {
 
 function maj() {
   document.getElementById('champDate').style.display =
-    document.getElementById('jour').value === 'date' ? '' : 'none'; document.getElementById('champHeure').style.display = document.getElementById('demandeHeure').checked ? 'none' : '';
+    document.getElementById('jour').value === 'date' ? '' : 'none'; document.getElementById('champHeure').style.display = document.getElementById('demandeHeure').checked ? 'none' : ''; document.getElementById('optMediation').style.display = document.getElementById('demandeHeure').checked ? 'none' : '';
   document.getElementById('apercu').textContent = construire();
   document.getElementById('ok').textContent = '';
 }
@@ -156,7 +156,7 @@ document.querySelectorAll('input, select').forEach(e => {
   e.addEventListener('input', maj);
   e.addEventListener('change', maj);
 });
-maj();
+['msgAccueil','demandeHeure'].forEach(function(id){ document.getElementById(id).addEventListener('change', function(){ var autre = (id === 'msgAccueil') ? 'demandeHeure' : 'msgAccueil'; document.getElementById(autre).checked = !this.checked; maj(); }); }); maj();
 </script>
 </body>
 </html>
