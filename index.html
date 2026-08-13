@@ -70,11 +70,11 @@
         </select>
       </div>
       <div class="champ" id="champDate" style="display:none"><label>Date</label><input id="date" type="date"></div>
-      <div class="champ"><label>Heure de remise des clés</label><input id="heure" type="time" value="14:30"></div>
+      <div class="champ" id="champHeure"><label>Heure de remise des clés</label><input id="heure" type="time" value="14:30"></div>
     </div>
   </fieldset>
 
-  <label class="opt-mediation">
+  <label class="opt-mediation"><input type="checkbox" id="demandeHeure"> Demander l'heure d'arrivée (au lieu de la remise des clés)</label><label class="opt-mediation">
     <input type="checkbox" id="mediation"> Ajouter la mention de médiation (réservation en direct)
   </label>
 
@@ -108,7 +108,7 @@ function construire() {
     } else quand = 'le …';
   }
 
-  const arrive = genre === 'f' ? 'arrivée' : 'arrivé';
+  const arrive = genre === 'f' ? 'arrivée' : 'arrivé'; if (document.getElementById('demandeHeure').checked) { const NL = String.fromCharCode(10); return "Bonjour " + prenom + "," + NL + "J'espère que vous allez bien 😊" + NL + NL + "Afin de pouvoir m'organiser au mieux pour votre accueil à la Villa CABOUA, pourriez-vous me dire vers quelle heure vous pensez arriver " + quand + " ?" + NL + NL + (memeJour ? "Merci et à tout à l'heure ! 🌺" : "Merci et à bientôt ! 🌺") + NL + "Thierry"; }
   const fin = memeJour ? "Au plaisir de vous accueillir à tout à l'heure 🌴" : "Au plaisir de vous accueillir 🌴";
 
   const mediation = document.getElementById('mediation').checked
@@ -132,7 +132,7 @@ function construire() {
 
 function maj() {
   document.getElementById('champDate').style.display =
-    document.getElementById('jour').value === 'date' ? '' : 'none';
+    document.getElementById('jour').value === 'date' ? '' : 'none'; document.getElementById('champHeure').style.display = document.getElementById('demandeHeure').checked ? 'none' : '';
   document.getElementById('apercu').textContent = construire();
   document.getElementById('ok').textContent = '';
 }
