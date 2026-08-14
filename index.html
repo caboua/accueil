@@ -111,13 +111,6 @@ function construire() {
   const arrive = genre === 'f' ? 'arrivée' : 'arrivé'; if (document.getElementById('demandeHeure').checked) { const NL = String.fromCharCode(10); return "Bonjour " + prenom + "," + NL + "J'espère que vous allez bien 😊" + NL + NL + "Afin de pouvoir m'organiser au mieux pour votre accueil à la Villa CABOUA, pourriez-vous me dire vers quelle heure vous pensez arriver " + quand + " ?" + NL + NL + (memeJour ? "Merci et à tout à l'heure ! 🌺" : "Merci et à bientôt ! 🌺") + NL + "Thierry"; }
   if (document.getElementById('msgDepart').checked) { const NL2 = String.fromCharCode(10); const js = document.getElementById('jour').value; const salut = (js === 'auj') ? "Merci et à tout à l'heure," : (js === 'dem') ? "Merci et à demain," : "Merci et à bientôt,"; const soiree = (js === 'auj') ? "" : "Profitez bien de votre dernière soirée 😊" + NL2 + NL2; return "Bonjour " + prenom + " 😊," + NL2 + "J'espère que tout se passe bien et que vous avez passé un très agréable séjour à la Villa CABOUA 🌿☀️" + NL2 + NL2 + "Pourriez-vous simplement me dire vers quelle heure vous pensez quitter la villa " + quand + ", afin que nous puissions nous organiser pour la remise des clés ?" + NL2 + NL2 + soiree + salut + NL2 + "Thierry"; } const fin = memeJour ? "Au plaisir de vous accueillir à tout à l'heure 🌴" : "Au plaisir de vous accueillir 🌴";
 
-  const mediation = false
-    ? "ℹ️ Médiation de la consommation : en cas de litige, toute réclamation doit d'abord m'être "
-      + "adressée par écrit (villa.caboua@gmail.com). À défaut d'accord dans un délai de deux mois, "
-      + "vous pouvez saisir gratuitement le médiateur CM2C — 49 rue de Ponthieu, 75008 Paris — "
-      + "www.cm2c.net, dans un délai d'un an à compter de votre réclamation.\n\n"
-    : "";
-
   return "Bonjour " + prenom + "\nJ'espère que vous allez bien 😊\n\n"
     + "Comme convenu, je vous attends " + quand + " à " + heure + " pour la remise des clés.\n\n"
     + "Voici le point GPS de la villa pour vous y rendre facilement :\n"
@@ -126,7 +119,6 @@ function construire() {
     + "Le stationnement est prévu juste devant la villa, vous pourrez vous garer facilement à votre arrivée.\n\n"
     + "N'hésitez pas à me prévenir lorsque vous êtes en route ou en cas de léger retard.\n\n"
     + "Je reste bien entendu joignable si besoin.\n\n"
-    + mediation
     + fin + "\nThierry";
 }
 
