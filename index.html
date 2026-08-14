@@ -74,8 +74,8 @@
     </div>
   </fieldset>
 
-  <label class="opt-mediation"><input type="checkbox" id="msgAccueil" checked> Accueil : remise des clés</label><label class="opt-mediation"><input type="checkbox" id="demandeHeure"> Demander l'heure d'arrivée</label><label class="opt-mediation" id="optMediation">
-    <input type="checkbox" id="mediation"> Ajouter la mention de médiation (réservation en direct)
+  <label class="opt-mediation"><input type="checkbox" id="msgAccueil" checked> Accueil : remise des clés</label><label class="opt-mediation"><input type="checkbox" id="demandeHeure"> Demander l'heure d'arrivée</label><label class="opt-mediation">
+    <input type="checkbox" id="msgDepart"> Départ : heure de libération
   </label>
 
   <div class="bulle" id="apercu"></div>
@@ -109,9 +109,9 @@ function construire() {
   }
 
   const arrive = genre === 'f' ? 'arrivée' : 'arrivé'; if (document.getElementById('demandeHeure').checked) { const NL = String.fromCharCode(10); return "Bonjour " + prenom + "," + NL + "J'espère que vous allez bien 😊" + NL + NL + "Afin de pouvoir m'organiser au mieux pour votre accueil à la Villa CABOUA, pourriez-vous me dire vers quelle heure vous pensez arriver " + quand + " ?" + NL + NL + (memeJour ? "Merci et à tout à l'heure ! 🌺" : "Merci et à bientôt ! 🌺") + NL + "Thierry"; }
-  const fin = memeJour ? "Au plaisir de vous accueillir à tout à l'heure 🌴" : "Au plaisir de vous accueillir 🌴";
+  if (document.getElementById('msgDepart').checked) { const NL2 = String.fromCharCode(10); const js = document.getElementById('jour').value; const salut = (js === 'auj') ? "Merci et à tout à l'heure," : (js === 'dem') ? "Merci et à demain," : "Merci et à bientôt,"; const soiree = (js === 'auj') ? "" : "Profitez bien de votre dernière soirée 😊" + NL2 + NL2; return "Bonjour " + prenom + " 😊," + NL2 + "J'espère que tout se passe bien et que vous avez passé un très agréable séjour à la Villa CABOUA 🌿☀️" + NL2 + NL2 + "Pourriez-vous simplement me dire vers quelle heure vous pensez quitter la villa " + quand + ", afin que nous puissions nous organiser pour la remise des clés ?" + NL2 + NL2 + soiree + salut + NL2 + "Thierry"; } const fin = memeJour ? "Au plaisir de vous accueillir à tout à l'heure 🌴" : "Au plaisir de vous accueillir 🌴";
 
-  const mediation = document.getElementById('mediation').checked
+  const mediation = false
     ? "ℹ️ Médiation de la consommation : en cas de litige, toute réclamation doit d'abord m'être "
       + "adressée par écrit (villa.caboua@gmail.com). À défaut d'accord dans un délai de deux mois, "
       + "vous pouvez saisir gratuitement le médiateur CM2C — 49 rue de Ponthieu, 75008 Paris — "
@@ -132,7 +132,7 @@ function construire() {
 
 function maj() {
   document.getElementById('champDate').style.display =
-    document.getElementById('jour').value === 'date' ? '' : 'none'; document.getElementById('champHeure').style.display = document.getElementById('demandeHeure').checked ? 'none' : ''; document.getElementById('optMediation').style.display = document.getElementById('demandeHeure').checked ? 'none' : '';
+    document.getElementById('jour').value === 'date' ? '' : 'none'; document.getElementById('champHeure').style.display = (document.getElementById('demandeHeure').checked || document.getElementById('msgDepart').checked) ? 'none' : '';
   document.getElementById('apercu').textContent = construire();
   document.getElementById('ok').textContent = '';
 }
@@ -156,7 +156,7 @@ document.querySelectorAll('input, select').forEach(e => {
   e.addEventListener('input', maj);
   e.addEventListener('change', maj);
 });
-['msgAccueil','demandeHeure'].forEach(function(id){ document.getElementById(id).addEventListener('change', function(){ var autre = (id === 'msgAccueil') ? 'demandeHeure' : 'msgAccueil'; document.getElementById(autre).checked = !this.checked; maj(); }); }); maj();
+var MSGS=['msgAccueil','demandeHeure','msgDepart']; MSGS.forEach(function(id){ document.getElementById(id).addEventListener('change', function(){ if(!this.checked){ this.checked=true; return; } MSGS.forEach(function(o){ if(o!==id) document.getElementById(o).checked=false; }); maj(); }); }); maj();
 </script>
 </body>
 </html>
