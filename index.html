@@ -39,6 +39,13 @@
   .opt-mediation { display:flex; gap:8px; align-items:center; font-size:.9rem; color:#444;
                    margin:2px 2px 4px; cursor:pointer; }
   .opt-mediation input { width:auto; }
+  .opt-merci { display:flex; gap:8px; align-items:center; font-size:.95rem; color:#1a355e;
+               font-weight:600; background:#fbf3e6; border:1px solid #f0dcbb; border-radius:10px;
+               padding:10px 12px; margin:8px 0 4px; cursor:pointer; }
+  .opt-merci input { width:auto; }
+  #merciImg { display:none; width:100%; max-width:320px; margin:0 auto 12px; border-radius:12px;
+              box-shadow:0 2px 10px rgba(0,0,0,.12); }
+  .partage { background:#25d366; color:#fff; }
 </style>
 </head>
 <body>
@@ -59,7 +66,7 @@
     </div>
   </fieldset>
 
-  <fieldset>
+  <fieldset id="fieldsetArrivee">
     <legend>Arrivée</legend>
     <div class="ligne">
       <div class="champ"><label>Jour</label>
@@ -77,19 +84,37 @@
   <label class="opt-mediation"><input type="checkbox" id="msgAccueil" checked> Accueil : remise des clés</label><label class="opt-mediation"><input type="checkbox" id="demandeHeure"> Demander l'heure d'arrivée</label><label class="opt-mediation">
     <input type="checkbox" id="msgDepart"> Départ : heure de libération
   </label>
+  <label class="opt-merci">
+    <input type="checkbox" id="msgRemerciements"> 💚 Remerciements (fin de séjour + avis Google)
+  </label>
+
+  <img id="merciImg" src="merci.jpg" alt="Carte Merci pour votre séjour — Villa CABOUA">
 
   <div class="bulle" id="apercu"></div>
 
   <div class="boutons">
     <button class="copier" onclick="copier()">📋 Copier</button>
-    <button class="whatsapp" onclick="whatsapp()">💬 WhatsApp</button>
+    <button class="whatsapp" id="btnWhatsapp" onclick="whatsapp()">💬 WhatsApp</button>
+    <button class="partage" id="btnPartage" onclick="partager()" style="display:none">📷 Photo + texte</button>
   </div>
   <div class="ok" id="ok"></div>
 </div>
 
 <script>
 function construire() {
-  const prenom = document.getElementById('prenom').value.trim() || '…';
+  const prenomBrut = document.getElementById('prenom').value.trim();
+  const prenom = prenomBrut || '…';
+
+  if (document.getElementById('msgRemerciements').checked) {
+    return "Bonjour " + (prenomBrut ? prenomBrut + ' ' : '') + "😊\n\n"
+      + "Un grand merci d'avoir choisi *la Villa CABOUA* pour votre séjour en Guadeloupe 🌿☀️\n\n"
+      + "J'espère que vous avez passé un agréable moment et que vous garderez de beaux souvenirs de Bouillante.\n\n"
+      + "Si le séjour vous a plu, un petit avis Google nous ferait énormément plaisir — et aiderait les prochains voyageurs à découvrir la villa ⭐\n\n"
+      + "👉 https://g.page/r/Cf08pFSiKjt4EBM/review\n\n"
+      + "Encore merci pour votre confiance, au plaisir de vous accueillir à nouveau 🌴\n\n"
+      + "*Thierry*\nVilla CABOUA\ncaboua.github.io/guadeloupe";
+  }
+
   const genre = document.querySelector('input[name="genre"]:checked').value;
   const jour = document.getElementById('jour').value;
   const h = document.getElementById('heure').value || '14:30';
@@ -123,6 +148,12 @@ function construire() {
 }
 
 function maj() {
+  const rem = document.getElementById('msgRemerciements').checked;
+  document.getElementById('fieldsetArrivee').style.display = rem ? 'none' : '';
+  document.getElementById('merciImg').style.display = rem ? 'block' : 'none';
+  document.getElementById('btnPartage').style.display = rem ? '' : 'none';
+  document.getElementById('btnWhatsapp').style.display = rem ? 'none' : '';
+
   document.getElementById('champDate').style.display =
     document.getElementById('jour').value === 'date' ? '' : 'none'; document.getElementById('champHeure').style.display = (document.getElementById('demandeHeure').checked || document.getElementById('msgDepart').checked) ? 'none' : '';
   document.getElementById('apercu').textContent = construire();
@@ -144,11 +175,26 @@ function whatsapp() {
   window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(construire()), '_blank');
 }
 
+async function partager() {
+  const texte = construire();
+  const ok = document.getElementById('ok');
+  try {
+    const blob = await (await fetch('merci.jpg')).blob();
+    const file = new File([blob], 'merci-villa-caboua.jpg', { type: 'image/jpeg' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], text: texte });
+      return;
+    }
+  } catch (e) { if (e && e.name === 'AbortError') return; }
+  window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(texte), '_blank');
+  ok.textContent = "Partage direct indisponible : texte ouvert dans WhatsApp — enregistrez l'image ci-dessus (appui long) et joignez-la.";
+}
+
 document.querySelectorAll('input, select').forEach(e => {
   e.addEventListener('input', maj);
   e.addEventListener('change', maj);
 });
-var MSGS=['msgAccueil','demandeHeure','msgDepart']; MSGS.forEach(function(id){ document.getElementById(id).addEventListener('change', function(){ if(!this.checked){ this.checked=true; return; } MSGS.forEach(function(o){ if(o!==id) document.getElementById(o).checked=false; }); maj(); }); }); maj();
+var MSGS=['msgAccueil','demandeHeure','msgDepart','msgRemerciements']; MSGS.forEach(function(id){ document.getElementById(id).addEventListener('change', function(){ if(!this.checked){ this.checked=true; return; } MSGS.forEach(function(o){ if(o!==id) document.getElementById(o).checked=false; }); maj(); }); }); maj();
 </script>
 </body>
 </html>
