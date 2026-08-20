@@ -153,6 +153,7 @@ function maj() {
   document.getElementById('merciImg').style.display = rem ? 'block' : 'none';
   document.getElementById('btnPartage').style.display = rem ? '' : 'none';
   document.getElementById('btnWhatsapp').style.display = rem ? 'none' : '';
+  if (rem) majCarte();
 
   document.getElementById('champDate').style.display =
     document.getElementById('jour').value === 'date' ? '' : 'none'; document.getElementById('champHeure').style.display = (document.getElementById('demandeHeure').checked || document.getElementById('msgDepart').checked) ? 'none' : '';
@@ -175,11 +176,59 @@ function whatsapp() {
   window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(construire()), '_blank');
 }
 
+/* Carte personnalisée : on remplace « POUR VOTRE SÉJOUR » par le prénom du client */
+var _carteBase = null;
+function chargerCarteBase() {
+  return new Promise(function (res, rej) {
+    if (_carteBase) return res(_carteBase);
+    var im = new Image();
+    im.onload = function () { _carteBase = im; res(im); };
+    im.onerror = rej;
+    im.src = 'merci.jpg';
+  });
+}
+async function genererCarte(prenom) {
+  var im = await chargerCarteBase();
+  var cv = document.createElement('canvas');
+  cv.width = im.naturalWidth; cv.height = im.naturalHeight;
+  var ctx = cv.getContext('2d');
+  ctx.drawImage(im, 0, 0);
+  if (prenom) {
+    ctx.fillStyle = '#FBEBDE';                 // crème échantillonné sur la carte
+    ctx.fillRect(120, 418, 840, 66);           // masque « POUR VOTRE SÉJOUR »
+    var nom = prenom.toUpperCase();
+    var tracking = 14, size = 60;
+    function largeur(s) {
+      ctx.font = 'bold ' + s + 'px Georgia, "Times New Roman", serif';
+      var w = 0; for (var i = 0; i < nom.length; i++) w += ctx.measureText(nom[i]).width;
+      return w + tracking * (nom.length - 1);
+    }
+    while (largeur(size) > 820 && size > 26) size -= 2;
+    ctx.font = 'bold ' + size + 'px Georgia, "Times New Roman", serif';
+    ctx.fillStyle = '#1A433E';                 // vert échantillonné sur la carte
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    var total = largeur(size), x = 540 - total / 2, cy = 451;
+    for (var j = 0; j < nom.length; j++) {
+      var w = ctx.measureText(nom[j]).width;
+      ctx.fillText(nom[j], x + w / 2, cy);
+      x += w + tracking;
+    }
+  }
+  return cv;
+}
+async function majCarte() {
+  try {
+    var cv = await genererCarte(document.getElementById('prenom').value.trim());
+    document.getElementById('merciImg').src = cv.toDataURL('image/jpeg', 0.92);
+  } catch (e) {}
+}
+
 async function partager() {
   const texte = construire();
   const ok = document.getElementById('ok');
   try {
-    const blob = await (await fetch('merci.jpg')).blob();
+    const cv = await genererCarte(document.getElementById('prenom').value.trim());
+    const blob = await new Promise(function (r) { cv.toBlob(r, 'image/jpeg', 0.92); });
     const file = new File([blob], 'merci-villa-caboua.jpg', { type: 'image/jpeg' });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       await navigator.share({ files: [file], text: texte });
