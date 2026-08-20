@@ -194,20 +194,20 @@ async function genererCarte(prenom) {
   var ctx = cv.getContext('2d');
   ctx.drawImage(im, 0, 0);
   if (prenom) {
-    ctx.fillStyle = '#FBEBDE';                 // crème échantillonné sur la carte
-    ctx.fillRect(120, 418, 840, 66);           // masque « POUR VOTRE SÉJOUR »
+    ctx.fillStyle = '#F8EADA';                 // crème échantillonné sur la carte
+    ctx.fillRect(125, 436, 872, 52);           // masque « POUR VOTRE SÉJOUR »
     var nom = prenom.toUpperCase();
-    var tracking = 14, size = 60;
+    var tracking = 15, size = 62;
     function largeur(s) {
       ctx.font = 'bold ' + s + 'px Georgia, "Times New Roman", serif';
       var w = 0; for (var i = 0; i < nom.length; i++) w += ctx.measureText(nom[i]).width;
       return w + tracking * (nom.length - 1);
     }
-    while (largeur(size) > 820 && size > 26) size -= 2;
+    while (largeur(size) > 860 && size > 26) size -= 2;
     ctx.font = 'bold ' + size + 'px Georgia, "Times New Roman", serif';
-    ctx.fillStyle = '#1A433E';                 // vert échantillonné sur la carte
+    ctx.fillStyle = '#1B433F';                 // vert échantillonné sur la carte
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    var total = largeur(size), x = 540 - total / 2, cy = 451;
+    var total = largeur(size), x = 561 - total / 2, cy = 463;
     for (var j = 0; j < nom.length; j++) {
       var w = ctx.measureText(nom[j]).width;
       ctx.fillText(nom[j], x + w / 2, cy);
